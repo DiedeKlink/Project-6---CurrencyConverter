@@ -1,8 +1,8 @@
-import { SafeAreaView, StatusBar, StyleSheet, Text, TextInput, View, FlatList, Item, Pressable } from 'react-native'
+import { SafeAreaView, StatusBar, StyleSheet, Text, TextInput, View, FlatList, Pressable } from 'react-native'
 import React, { useState } from 'react';
 
 //Constants
-import { currencyByRupee } from './constants';
+import { currencyByEuro } from './constants';
 
 //Component
 import CurrencyButton from './components/CurrencyButton'
@@ -39,19 +39,56 @@ export default function App() {
       })
     }
   }
+  
+
+
 
   return (
-    <SafeAreaView>
+    <>
       <StatusBar
       />
       <View style={styles.container}>
         <View style={styles.topContainer}>
-          <View style={styles.rupeesContainer}>
-            
+          <View style={styles.eurosContainer}>
+            <Text style={styles.euro}>€</Text>
+            <TextInput 
+            maxLength={14}
+            value={inputValue}
+            clearButtonMode='always'
+            onChangeText={
+              (text) => {setInputValue(text); setTargetCurrency(''); setResultValue('') }
+            }
+            keyboardType='number-pad'
+            placeholder='Enter amount in Euros'
+            style={styles.input}
+            />
           </View>
+          {resultValue && (
+            <Text style={styles.resultTxt}>
+              {resultValue}
+            </Text>
+          )}
+        </View>
+        <View style={styles.bottomContainer}>
+          <FlatList
+          numColumns={2}
+          data={currencyByEuro}
+          keyExtractor={item => item.name}
+          renderItem={({item}) => (
+            <Pressable
+            style={[
+              styles.button, 
+              targetCurrency === item.name && styles.selected
+            ]}
+            onPress={() => buttonPressed(item)}
+            >
+              <CurrencyButton {...item} />
+            </Pressable>
+          )}
+          />
         </View>
       </View>
-    </SafeAreaView>
+    </>
   )
 }
 
@@ -70,16 +107,20 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontWeight: '800',
   },
-  rupee: {
+  euro: {
     marginRight: 8,
 
     fontSize: 22,
     color: '#000000',
     fontWeight: '800',
   },
-  rupeesContainer: {
+  eurosContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  input: {
+    backgroundColor: '#ffffff',
+    color: '#000'
   },
   inputAmountField: {
     height: 40,
